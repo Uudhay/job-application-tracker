@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Job List</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #facc15;
+        }
+
+        .container {
+            width: 90%;
+            margin: 40px auto;
+        }
+
+        .title-box {
+            margin-bottom: 25px;
+        }
+
+        .title-box h1 {
+            font-size: 34px;
+            margin-bottom: 8px;
+        }
+
+        .title-box p {
+            color: #cbd5e1;
+        }
+
+        .table-box {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(37, 99, 235, 0.9);
+            color: white;
+            text-align: left;
+            padding: 16px;
+            font-size: 15px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            color: #f8fafc;
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .edit-btn {
+            color: #22c55e;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 16px;
+        }
+
+        .delete-btn {
+            color: #f87171;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .edit-btn:hover,
+        .delete-btn:hover {
+            text-decoration: underline;
+        }
+
+        .empty-box {
+            background: rgba(255,255,255,0.08);
+            padding: 30px;
+            border-radius: 18px;
+            text-align: center;
+            color: #e2e8f0;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.35);
+        }
+
+        .add-btn {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 12px 22px;
+            background: linear-gradient(90deg, #facc15, #fb923c);
+            color: black;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 10px;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo">JobTracker 🚀</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/add-job/">Add Job</a>
+            <a href="/jobs/">View Jobs</a>
+        </div>
+    </div>
+
+<div class="container">
+    <div class="title-box">
+        <h1>Your Job Applications</h1>
+        <p>Track every application, interview status, and update in one place.</p>
+
+        <p style="margin-top:10px; font-weight:bold;">
+        Total Jobs: {{ total_jobs }}</p>
+    </div>
+
+<form method="GET" style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+    <input type="text" name="q" placeholder="Search by company or role"
+       value="{{ request.GET.q }}"
+       style="padding: 12px; width: 300px; border-radius: 8px; border-radius: 8px; border: none; outline: none;">
+
+    <select name="status"
+            style="padding: 12px; width: 220px; border-radius: 8px; border: none; outline: none;">
+        <option value="">All Status</option>
+
+        <option value="Applied" {% if request.GET.status == "Applied" %}selected{% endif %}>Applied</option>
+
+        <option value="Interview Scheduled" {% if request.GET.status == "Interview Scheduled" %}selected{% endif %}>Interview Scheduled</option>
+
+        <option value="Selected" {% if request.GET.status == "Selected" %}selected{% endif %}>Selected</option>
+
+        <option value="Rejected" {% if request.GET.status == "Rejected" %}selected{% endif %}>Rejected</option>
+    </select>
+
+    <button type="submit"
+            style="padding: 12px 20px; border: none; border-radius: 8px; background: #facc15; font-weight: bold; cursor: pointer;">
+        Search
+    </button>
+    <a href="/jobs/"style="padding: 12px 20px; border-radius: 8px; background: #e2e8f0; text-decoration: none; color: black; font-weight: bold;">Clear</a>
+</form>
+</div>
+
+        {% if jobs %}
+        <div class="table-box">
+            <table>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Job Role</th>
+                    <th>Status</th>
+                    <th>Applied Date</th>
+                    <th>Notes</th>
+                    <th>Action</th>
+                </tr>
+
+                {% for job in jobs %}
+                <tr>
+                    <td>{{ job.company_name }}</td>
+                    <td>{{ job.job_role }}</td>
+                    <td>
+                      {% if job.status == "Applied" %}
+                     <span style="color:blue; font-weight:bold;">Applied</span>
+                      {% elif job.status == "Interview Scheduled" %}
+                     <span style="color:orange; font-weight:bold;">Interview</span>
+                      {% elif job.status == "Selected" %}
+                     <span style="color:green; font-weight:bold;">Selected</span>
+                      {% elif job.status == "Rejected" %}
+                     <span style="color:red; font-weight:bold;">Rejected</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ job.applied_date }}</td>
+                    <td>{{ job.notes }}</td>
+                    <td>
+                        <a href="/edit-job/{{ job.id }}/" class="edit-btn">Edit</a>
+                        <a href="/delete-job/{{ job.id }}/"
+                           onclick="return confirm('Are you sure you want to delete this job?')"
+                           class="delete-btn">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-box">
+            <h2>No jobs added yet</h2>
+            <p style="margin-top:10px;">Start by adding your first job application.</p>
+            <a href="/add-job/" class="add-btn">Add First Job</a>
+        </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

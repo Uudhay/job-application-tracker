@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Job</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb, #38bdf8);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 60px;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .nav-links a {
+            color: white;
+            margin-left: 25px;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: #facc15;
+        }
+
+        .container {
+            width: 40%;
+            margin: 60px auto;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        p {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        input {
+            background: rgba(255,255,255,0.9);
+        }
+
+        select {
+            background: rgba(255,255,255,0.9);
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            background: linear-gradient(90deg, #facc15, #f97316);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.95);
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="logo">JobTracker</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/add-job/">Add Job</a>
+            <a href="/jobs/">View Jobs</a>
+        </div>
+    </div>
+
+    <div class="container">
+        {% if page_type == 'edit' %}
+    <h1>Edit Job ✏️</h1>
+      <p>Update your saved job application details</p>
+           {% else %}
+        <h1>Add New Job 🚀</h1>
+      <p>Track your dream company journey</p>
+           {% endif %}
+
+       <form method="POST">
+           {% csrf_token %}
+
+           <label>Company Name</label>
+            {{ form.company_name }}
+
+           <label>Job Role</label>
+            {{ form.job_role }}
+
+           <label>Status</label>
+            {{ form.status }}
+
+           <label>Applied Date</label>
+            {{ form.applied_date }}
+
+           <label>Notes</label>
+            {{ form.notes }}    
+
+            {% if page_type == 'edit' %}
+           <button type="submit" class="btn">Update Job</button>
+            {% else %}
+           <button type="submit" class="btn">Save Job</button>
+            {% endif %}
+      </form>
+    </div>
+
+</body>
+</html>
